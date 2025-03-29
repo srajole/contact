@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact List</title>
+</head>
+<body style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(to bottom right, #3b82f6, #9333ea); padding: 20px; color: white; font-family: Arial, sans-serif;">
+    
+    <h1 style="font-size: 2.5rem; font-weight: bold; margin-bottom: 20px;">📞 Contact List</h1>
+    
+    <p id="loading-text" style="font-size: 1.2rem; animation: bounce 1s infinite alternate;">Loading contacts...</p>
+    
+    <ul id="contact-list" style="display: none; width: 100%; max-width: 400px; background: white; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); border-radius: 10px; padding: 15px; list-style: none; color: black;"></ul>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch("https://60ac9dff9e2d6b0017457815.mockapi.io/ag/contacts")
+                .then(response => response.json())
+                .then(data => {
+                    setTimeout(() => {
+                        document.getElementById("loading-text").style.display = "none";
+                        const contactList = document.getElementById("contact-list");
+                        contactList.style.display = "block";
+                        
+                        data.forEach(contact => {
+                            const li = document.createElement("li");
+                            li.style.padding = "12px";
+                            li.style.borderBottom = "1px solid #ddd";
+                            li.style.transition = "background 0.3s, transform 0.2s ease-in-out";
+                            li.onmouseover = function() { this.style.background = "#f3f4f6"; this.style.transform = "scale(1.03)"; };
+                            li.onmouseout = function() { this.style.background = "white"; this.style.transform = "scale(1)"; };
+                            
+                            li.innerHTML = `
+                                <p style="font-size: 1rem; color: #333; margin: 5px 0;"><strong style="color: #111;">Name:</strong> ${contact.first_name} ${contact.last_name || "No Name Available"}</p>
+                                <p style="font-size: 1rem; color: #333; margin: 5px 0;"><strong style="color: #111;">Contact:</strong> ${contact.phone || "No phone available"}</p>
+                                <p style="font-size: 1rem; color: #333; margin: 5px 0;"><strong style="color: #111;">Mail:</strong> ${contact.email || "No email available"}</p>
+                            `;
+                            contactList.appendChild(li);
+                        });
+                    }, 1300);
+                })
+                .catch(error => {
+                    document.getElementById("loading-text").textContent = "Error loading contacts.";
+                    console.error("Error fetching contacts:", error);
+                });
+        });
+    </script>
+    
+</body>
+</html>
